@@ -1,5 +1,12 @@
+//official imports.
+#include<stdio.h>
+#include<stdlib.h>
 #include<unistd.h>
+#include<fcntl.h>
+#include<sys/stat.h>
+#include<stdint.h>
 #include<sys/mman.h>
+#include<sys/ioctl.h>
 #include<errno.h>
 
 //auth0r: afang
@@ -84,7 +91,7 @@ void* allocate(void *addr, size_t size){
 	printf("real allocate at: %p\n", ptr);
 	printf("will return : %p\n", addr);
 	if((void*)((size_t)addr & 0xffff0000) != (void*)ptr){
-	printf("error!: %s\n",strerror(errno));
+	perror("[*]There's problem ");
 	exit(-1);
 	}
 	return addr;
