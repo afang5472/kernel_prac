@@ -15,11 +15,11 @@ char *p;
 int heap_major=201; //major device number.
 struct param
 {
-    size_t len;
-    char* buf;
-    char* addr;
+    size_t len; //content length
+    char* buf; //userspace buffer
+    unsigned long idx;//ptr array index.
 };
-char buf[16] = {0};
+char *ptr[40]; //global ptrs
 long heap_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 {
     struct param par;
