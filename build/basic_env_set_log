@@ -1,0 +1,7 @@
+1. download src from kernel.org
+2. install dependency: apt-get install libncurses5-dev build-essential kernel-package
+3. make menuconfig
+4. cat /sys/kernel/debug/kernel_page_tables with build option CONFIG_X86_PTDUMP 
+5. download busybox src from https://busybox.net/downloads/
+6. make menuconfig -> Settings -> build as a statically linked binary. 
+7. make && make install , got _install as file system directory
