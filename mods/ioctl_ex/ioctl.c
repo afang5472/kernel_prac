@@ -79,7 +79,7 @@ static int arw_init(void)
         arw_major = MAJOR(devno);
     }
     // 打印设备号
-    printk("arw_major /dev/arw: %d", arw_major);
+    printk("arw_major /dev/arw: %d\n", arw_major);
     if (result < 0)
         return result;
     arw_class = class_create(THIS_MODULE, "arw");

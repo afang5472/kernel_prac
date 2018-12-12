@@ -1,0 +1,19 @@
+6315 blocks
+warning: TCG doesn't support requested feature: CPUID.01H:EDX.vme [bit 1]
+6291 blocks
+warning: TCG doesn't support requested feature: CPUID.01H:EDX.vme [bit 1]
+6291 blocks
+warning: TCG doesn't support requested feature: CPUID.01H:EDX.vme [bit 1]
+qemu-system-x86_64: -gdb tcp::1234: Failed to bind socket: Address already in use
+6291 blocks
+warning: TCG doesn't support requested feature: CPUID.01H:EDX.vme [bit 1]
+qemu-system-x86_64: -gdb tcp::1234: Failed to bind socket: Address already in use
+6291 blocks
+warning: TCG doesn't support requested feature: CPUID.01H:EDX.vme [bit 1]
+qemu-system-x86_64: -gdb tcp::1234: Failed to bind socket: Address already in use
+6291 blocks
+warning: TCG doesn't support requested feature: CPUID.01H:EDX.vme [bit 1]
+qemu-system-x86_64: -gdb tcp::1234: Failed to bind socket: Address already in use
+6291 blocks
+warning: TCG doesn't support requested feature: CPUID.01H:EDX.vme [bit 1]
+qemu-system-x86_64: -gdb tcp::1234: Failed to bind socket: Address already in use
