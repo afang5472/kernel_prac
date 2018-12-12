@@ -1,7 +1,6 @@
 obj-m := ioctl.o
-KERNELDR := /root/source/linux-3.2.10/ 
 PWD := $(shell pwd)
 all:
-	$(MAKE) -C $(KERNELDR) M=$(PWD) modules
+	$(MAKE) -C $(KERNSRC_DIR) M=$(PWD) modules
 clean:
-	$(MAKE) -C $(KERNELDR) M=$(PWD) clean
+	$(MAKE) -C $(KERNSRC_DIR) M=$(PWD) clean

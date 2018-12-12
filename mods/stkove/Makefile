@@ -1,5 +1,5 @@
 obj-m := target.o
-KERNELDR := /root/source/linux-3.2.10/ 
+KERNELDR := $(KERNSRC_DIR) 
 PWD := $(shell pwd)
 ccflags-y := -fno-stack-protector
 all:

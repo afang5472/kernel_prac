@@ -5,3 +5,4 @@
 5. download busybox src from https://busybox.net/downloads/
 6. make menuconfig -> Settings -> build as a statically linked binary. 
 7. make && make install , got _install as file system directory
+8. when compile kernel module and exploit , plz utilizy source `./build/env.sh`
