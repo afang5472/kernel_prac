@@ -1,5 +1,5 @@
 obj-m := heap.o
-KERNELDR := /root/source/linux-3.2.10/ 
+KERNELDR := $(KERNSRC_DIR) 
 PWD := $(shell pwd)
 all:
 	$(MAKE) -C $(KERNELDR) M=$(PWD) modules

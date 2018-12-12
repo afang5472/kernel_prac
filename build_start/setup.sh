@@ -17,6 +17,7 @@ cat << ENDER > etc/init.d/rcS
 # startup script
 mount -t proc none /proc
 mount -t sysfs none /sys
+mount -t debugfs none /sys/kernel/debug/
 /sbin/mdev -s
 mkdir /tmp
 chmod 777 -R /tmp

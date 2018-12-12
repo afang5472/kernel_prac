@@ -18,13 +18,16 @@ echo "exploits put here" > exploits/README
 
 #copy target mods here
 # todo:
+# move the whole directory .
+cp -r $KERNPRAC_MOD .
 
 #copy exp here 
 # todo:
+cp -r $KERNPRAC_EXP .
 
 # repack rootfs image>
 find . | cpio -o --format=newc > ../rootfs.img 
 
 #start..!
 
-qemu-system-x86_64 -kernel $KERNSRC_DIR"/arch/x86_64/boot/bzImage" -initrd $BUSYBOX_DIR"rootfs.img" -append "console=ttyS0 root=/dev/ram rdinit=/sbin/init" -cpu kvm64,+smep -monitor /dev/null -nographic -gdb tcp::1234
+qemu-system-x86_64 -kernel $KERNSRC_DIR"/arch/x86_64/boot/bzImage" -initrd $BUSYBOX_DIR"rootfs.img" -append "console=ttyS0 root=/dev/ram rdinit=/sbin/init" -cpu kvm64,+smep,+smap -monitor /dev/null -nographic -gdb tcp::1234
