@@ -10,6 +10,7 @@ mkdir -p proc sys dev etc etc/init.d
 touch etc/init.d/rcS
 chmod +x etc/init.d/rcS 
 touch etc/passwd
+touch etc/group
 
 #  write into init script
 cat << ENDER > etc/init.d/rcS 
@@ -21,7 +22,13 @@ mount -t debugfs none /sys/kernel/debug/
 /sbin/mdev -s
 mkdir /tmp
 chmod 777 -R /tmp
+mkdir /home
+mkdir -p /home/ctf 
 adduser ctf
+insmod /mods/ioctl_ex/ioctl.ko
+mknod /dev/arw c 200 0
+chmod 777 /dev/arw
+cat /proc/modules 
 su ctf
 ENDER
 
