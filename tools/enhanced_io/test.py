@@ -3,9 +3,10 @@
 # Auth0r : afang
 # nice day mua! :P
 # desc:
-# [complete file uploading or automatic interactive procedure]
-# [by co-operating with pwntools & pesudo tty]
-
+'''
+complete file uploading or automatic interactive procedure
+by co-operating with pwntools & pesudo tty
+'''
 #lambs:
 wait = lambda x: raw_input(x)
 
