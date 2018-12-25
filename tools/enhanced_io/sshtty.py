@@ -9,6 +9,7 @@ from ptyprocess import PtyProcessUnicode
 
 STDIN_FD = sys.stdin.fileno()
 STDOUT_FD = sys.stdout.fileno()
+user_input = ""
 
 expect = ""
 
@@ -109,10 +110,11 @@ class PTY(object):
                 break
 
     def _has_child_response(self):
+        global user_input 
         assert isinstance(self.pty, PtyProcessUnicode)
         try:
-            self.pty.flush()
             data = self.pty.read(4096)
+            self.pty.flush()
         except EOFError:
             return False
 
@@ -123,11 +125,14 @@ class PTY(object):
         return True
 
     def _has_user_input(self):
+        global user_input
         assert isinstance(self.pty, PtyProcessUnicode)
         data = self._read_stdin(4096)
+        user_input = data
         if not data:
             return False
         self.pty.write(data)
+        self.pty.flush()
         return True
 
     def _read_stdin(self, bufsize):
