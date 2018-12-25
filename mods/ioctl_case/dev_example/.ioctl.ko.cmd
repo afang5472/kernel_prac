@@ -1,0 +1,1 @@
+cmd_/home/kernel_prac/mods/ioctl_case/example/ioctl.ko := ld -r -m elf_x86_64 -T ./scripts/module-common.lds --build-id  -o /home/kernel_prac/mods/ioctl_case/example/ioctl.ko /home/kernel_prac/mods/ioctl_case/example/ioctl.o /home/kernel_prac/mods/ioctl_case/example/ioctl.mod.o

@@ -6,8 +6,9 @@
 #include <linux/cdev.h>
 #include <asm/uaccess.h>
 #include <linux/device.h>
-#include<linux/slab.h>
-#include<linux/string.h>
+#include <linux/slab.h>
+#include <linux/string.h>
+
 struct class *arw_class;
 struct cdev cdev;
 char *p;

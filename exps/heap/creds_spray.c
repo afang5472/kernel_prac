@@ -1,4 +1,4 @@
-#include "/root/kernel/template/template.h"
+#include "../../template/template.h"
 
 struct param{
 
@@ -23,7 +23,7 @@ int main(){
 	//open 10 fds for next ioctl usage.
 	for (int i = 0; i < 10 ; i++){
 		
-		fd  = open("/dev/heap", O_RDWR);
+		fd  = open("/dev/arw", O_RDWR);
 		if(fd == -1){
 			perror("open device wrong" );
 			return -1;
