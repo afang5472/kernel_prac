@@ -1,4 +1,6 @@
 //stack_smashing.c
+//This file intends for illustrating stack smashing technique.
+
 #include <linux/init.h>
 #include <linux/module.h>
 #include <linux/kernel.h>
