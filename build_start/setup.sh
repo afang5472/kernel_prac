@@ -13,6 +13,7 @@ touch etc/passwd
 touch etc/group
 
 #  write into init script
+#  will execute at the time after booting up.
 cat << ENDER > etc/init.d/rcS 
 #!/bin/sh
 # startup script
@@ -25,9 +26,7 @@ chmod 777 -R /tmp
 mkdir /home
 mkdir -p /home/ctf 
 adduser ctf
-insmod /mods/ioctl_ex/ioctl.ko
-mknod /dev/arw c 200 0
-chmod 777 /dev/arw
+insmod /mods/proc_entry_case/example/kmod_hellomod.ko
 cat /proc/modules 
 su ctf
 ENDER

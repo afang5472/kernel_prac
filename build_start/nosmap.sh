@@ -29,5 +29,5 @@ cp -r $KERNPRAC_EXP .
 find . | cpio -o --format=newc > ../rootfs.img 
 
 #start..!
-
-qemu-system-x86_64 -kernel $KERNSRC_DIR"/arch/x86_64/boot/bzImage" -initrd $BUSYBOX_DIR"rootfs.img" -append "console=ttyS0 root=/dev/ram rdinit=/sbin/init" -cpu kvm64,+smep -monitor /dev/null -nographic -gdb tcp::1234
+echo "Qemu Inits..."
+/home/afang/QEMU/qemu/build/x86_64-softmmu/qemu-system-x86_64 -kernel $KERNSRC_DIR"/arch/x86_64/boot/bzImage" -initrd $BUSYBOX_DIR"rootfs.img" -append "console=ttyS0 root=/dev/ram rdinit=/sbin/init" -cpu kvm64,+smep -monitor /dev/null -nographic 

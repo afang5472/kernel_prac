@@ -1,4 +1,4 @@
-obj-m := target.o
+obj-m := kmod_hellomod.o
 KERNELDR := $(KERNSRC_DIR) 
 PWD := $(shell pwd)
 ccflags-y := -fno-stack-protector
