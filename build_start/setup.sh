@@ -16,18 +16,28 @@ touch etc/group
 #  will execute at the time after booting up.
 cat << ENDER > etc/init.d/rcS 
 #!/bin/sh
-# startup script
+# startup script...
 mount -t proc none /proc
 mount -t sysfs none /sys
 mount -t debugfs none /sys/kernel/debug/
 /sbin/mdev -s
+
+#make tmp dir usable...
 mkdir /tmp
 chmod 777 -R /tmp
 mkdir /home
 mkdir -p /home/ctf 
 adduser ctf
+
+#insmods...
 insmod /mods/proc_entry_case/proc_entry_stackoverflow/kmod_stackoverflow.ko
+insmod /mods/ioctl_case/ioctl_example/ioctl_example.ko
+
+#mknod for example device for testing purpose...
+mknod /dev/example c 200 0
+chmod 0666 /dev/example
 cat /proc/modules 
+
 su ctf
 ENDER
 
