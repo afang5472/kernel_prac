@@ -1,4 +1,4 @@
-obj-m := ioctl.o
+obj-m := ioctl_example.o
 PWD := $(shell pwd)
 all:
 	$(MAKE) -C $(KERNSRC_DIR) M=$(PWD) modules
