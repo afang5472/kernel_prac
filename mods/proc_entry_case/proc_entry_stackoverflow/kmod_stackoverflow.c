@@ -13,17 +13,9 @@ int len, temp;
 char *msg;
 
 int read_proc(struct file *filep, char *buf, size_t count, loff_t *offp){
-	if(count>temp){
-		count = temp;
-	}
-	//not pretty clear ops about temp.
-	temp = temp - count;
-	copy_to_user(buf,msg,count);
-	if(count==0){
-		//reset temp
-		temp = len;
-	}
-	return count;
+	char local_buf[20];
+	strcpy(local_buf, buf);
+	return copy_to_user(buf, local_buf, 20);
 }
 
 int write_proc(struct file *filep, const char *buf, size_t count, loff_t *offp){
@@ -40,9 +32,9 @@ write: write_proc
 
 void create_new_proc_entry(void){
 
-	msg = kmalloc(10*sizeof(char), GFP_KERNEL); //kmalloc size 10 for usage.
-	printk("space allocated at : %p\n", msg);
-	proc_create("hellomod", 0666, NULL, &proc_fops);
+//	msg = kmalloc(10*sizeof(char), GFP_KERNEL); //kmalloc size 10 for usage.
+//	printk("space allocated at : %p\n", msg);
+	proc_create("stkovemod", 0666, NULL, &proc_fops);
 }
 
 

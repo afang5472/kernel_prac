@@ -1,0 +1,2 @@
+/home/afang/sysinternal/kernel_prac/mods/proc_entry_case/proc_entry_stackoverflow/kmod_stackoverflow.ko
+/home/afang/sysinternal/kernel_prac/mods/proc_entry_case/proc_entry_stackoverflow/kmod_stackoverflow.o

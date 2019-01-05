@@ -26,7 +26,7 @@ chmod 777 -R /tmp
 mkdir /home
 mkdir -p /home/ctf 
 adduser ctf
-insmod /mods/proc_entry_case/example/kmod_hellomod.ko
+insmod /mods/proc_entry_case/proc_entry_stackoverflow/kmod_stackoverflow.ko
 cat /proc/modules 
 su ctf
 ENDER
