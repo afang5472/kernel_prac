@@ -10,14 +10,23 @@
 //author : afang
 //comment: what a nice day, isn't it?!
 
-int main(){
+int main(int argc, char* argv[]){
 
-	char *dev = "/dev/example";
+	char *dev = "/dev/uaf";
 	char *buf = "I'm inside kernel.\n";
 	int fd = open(dev, O_RDWR);
-//	ioctl(fd, 8, 0xffffffff);//copy from user access unmapped region.
-	for(int i = 0; i < 100; i++){
-	ioctl(fd, 999, 0xffffffff);//copy from user access unmapped region.
+
+	struct temp{
+		size_t length;
+		char *buf;
+		size_t idx;
+	}a1;
+	a1.length = 0x2e0;
+	a1.idx = 20;
+	struct temp *test = &a1;
+
+	for(int i = 0; i < 1000; i++){
+		ioctl(fd, 'd', test);
 	}
 	return 0;
 }

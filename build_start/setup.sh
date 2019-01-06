@@ -30,12 +30,16 @@ mkdir -p /home/ctf
 adduser ctf
 
 #insmods...
-insmod /mods/proc_entry_case/proc_entry_stackoverflow/kmod_stackoverflow.ko
 insmod /mods/ioctl_case/ioctl_example/ioctl_example.ko
+insmod /mods/ioctl_case/heap_example/ioctl_uaf.ko
+insmod /mods/proc_entry_case/proc_entry_stackoverflow/kmod_stackoverflow.ko
 
 #mknod for example device for testing purpose...
 mknod /dev/example c 200 0
+mknod /dev/uaf c 201 0
 chmod 0666 /dev/example
+chmod 0666 /dev/uaf
+chmod 0666 /dev/ptmx
 cat /proc/modules 
 
 su ctf
