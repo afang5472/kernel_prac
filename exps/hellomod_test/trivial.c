@@ -4,6 +4,7 @@
 #include<unistd.h>
 #include<sys/types.h>
 #include<sys/stat.h>
+#include<sys/ioctl.h>
 #include<fcntl.h>
 
 //author : afang
@@ -12,14 +13,26 @@
 int main(){
 
 	//interact with kernel module to test if module is effective..
-	char *file = "/proc/hellomod";
-	char *buf = "I'm inside kernel.\n";
+	char *file = "/dev/example";
+	char *buf = "test String...\n";
+	struct temp{
+		size_t len;
+		char* buf;
+		char* addr;
+	}test;
+
 	int fd = open(file, O_RDWR);
-	write(fd, buf, strlen(buf));
-	char *buf2 = (char*)malloc(20);
-	read(fd, buf2, 20);
-	printf("content:\n");
-	printf("%s", buf2);
+	struct temp* p1 = &test;
+	p1->buf = (char*)malloc(0x20);
+	//trigger output of stack addr for testing...
+	ioctl(fd, 5, (size_t)p1); //right now, addr_limit has been modified into all spaces...
+	printf("Accepting input..\n");
+	getchar();
+	//try to access kernel space...	
+	char *caster = (char*)malloc(0x30);
+	memcpy(caster, (size_t*)0xffffffff810a1c50, 10);
+	printf("%p\n", (size_t*)caster);
+
 	return 0;
 }
 

@@ -48,6 +48,7 @@ long example_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
             info = (struct thread_info * )p_stack;
             
             printk("addr_limit's addr: 0x%p\n", &info->addr_limit);
+            printk("addr_limit's value: 0x%p\n", info->addr_limit);
             memset(&info->addr_limit, 0xff, 0x8);
             put_user(info, &p_arg->addr);
             break;
@@ -65,6 +66,7 @@ long example_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
     }
     return retval;
 }
+
 static const struct file_operations example_fops = {
     .owner = THIS_MODULE,
     .unlocked_ioctl = example_ioctl

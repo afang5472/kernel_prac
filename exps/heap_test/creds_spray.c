@@ -66,7 +66,6 @@ int main(){
 	//now , fork!
 	int pid = fork();
 
-	//
 	if(pid < 0){
 		perror("fork failed: ");
 		exit(-1);
